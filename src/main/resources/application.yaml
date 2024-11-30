@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mychat?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: "!!!Zpc20100709"
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      database: 0
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: 10000ms
+  mail:
+    host: smtp.qq.com
+    username: 1055803945@qq.com
+    password: sdhpvbxuljvvbdaa
+    port: 465
+    properties:
+        mail:
+            smtp:
+            ssl:
+                enable: true
+            auth: true
+            starttls:
+                enable: true
+            socketFactory:
+                port: 465
+                class: javax.net.ssl.SSLSocketFactory
+    protocol: smtps
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    session:
+      timeout: PT60M
+  shutdown: graceful
+
+mybatis:
+  mapper-locations: classpath:/mapper/xml/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+springdoc:
+  packages-to-scan: top.zhangpy.mychat.controller
+  swagger-ui:
+    path: /swagger-ui.html
+
+netty:
+  port: 8081
+  host: localhost
+
