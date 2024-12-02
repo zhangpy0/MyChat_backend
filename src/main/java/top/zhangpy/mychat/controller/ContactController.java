@@ -66,10 +66,15 @@ public class ContactController {
         }
         friendProfile.nullToEmpty();
         File avatarFile = userProfileService.getAvatarFileByUserId(Integer.valueOf(friendId));
-        FileInputStream fileInputStream = new FileInputStream(avatarFile);
-        final byte[] avatarBytes = IOUtils.toByteArray(fileInputStream);
-        fileInputStream.close();
-        String avatarBase64 = Base64.getEncoder().encodeToString(avatarBytes);
+        String avatarBase64;
+        if (avatarFile == null || !avatarFile.exists()) {
+            avatarBase64 = "";
+        } else {
+            FileInputStream fileInputStream = new FileInputStream(avatarFile);
+            final byte[] avatarBytes = IOUtils.toByteArray(fileInputStream);
+            fileInputStream.close();
+            avatarBase64 = Base64.getEncoder().encodeToString(avatarBytes);
+        }
         Map<String, String> res = Map.of(
                 "userId", String.valueOf(friendProfile.getUserId()),
                 "nickname", friendProfile.getNickname(),
