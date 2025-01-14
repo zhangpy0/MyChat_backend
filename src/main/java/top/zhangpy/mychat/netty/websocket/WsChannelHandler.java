@@ -42,7 +42,8 @@ public class WsChannelHandler extends SimpleChannelInboundHandler<Object> {
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
         TextWebSocketFrame textWebSocketFrame = (TextWebSocketFrame) o;
         String content = textWebSocketFrame.text();
-        log.info("receive message from: " + channelHandlerContext.channel().remoteAddress() + " . content: " + content);
+        // 取消开发日志输出
+//        log.info("receive message from: " + channelHandlerContext.channel().remoteAddress() + " . content: " + content);
 //        channelHandlerContext.channel().writeAndFlush(new TextWebSocketFrame("server received: " + content));
     }
 

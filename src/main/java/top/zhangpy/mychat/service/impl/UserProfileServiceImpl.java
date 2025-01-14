@@ -67,7 +67,7 @@ public class UserProfileServiceImpl extends ServiceImpl<UserProfileMapper, UserP
     @Override
     public File getAvatarFileByUserId(Integer userId) {
         UserProfile userProfile = getUserProfileByUserId(userId);
-        if (userProfile == null) {
+        if (userProfile == null || userProfile.getAvatarPath() == null) {
             return null;
         }
         return new File(userProfile.getAvatarPath());
