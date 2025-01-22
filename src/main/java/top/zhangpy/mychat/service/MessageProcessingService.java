@@ -53,7 +53,9 @@ public class MessageProcessingService {
         Channel channel = NettyConfig.getUserChannelMap().get(userId);
         if (channel != null) {
             try {
+                log.info("online user: " + userId + " , ip: " + channel.remoteAddress());
                 channel.writeAndFlush(new TextWebSocketFrame(serverMessage.toString()));
+                log.info("send message from: " + serverMessage.getSenderId() + " to: " + userId);
                 return true;
             } catch (Exception e) {
                 log.error("Error sending message to user: " + userId, e);

@@ -20,22 +20,23 @@ public class WsChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
-        log.info("channel id: " + channel.id().asLongText());
+        log.info("client: " + channel.remoteAddress() + " connected");
+        log.info("channel id: " + channel.id().asLongText() + " user id: " + channel.attr(AttributeKey.valueOf("userId")).get());
         NettyConfig.getChannelGroup().add(channel);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
-        log.info("client: " + channel.remoteAddress() + " connected");
-        log.info("channel id: " + channel.id().asLongText());
+//        log.info("client: " + channel.remoteAddress() + " connected");
+//        log.info("channel id: " + channel.id().asLongText());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        log.info("client: " + channel.remoteAddress() + " disconnected");
-        log.info("channel id: " + channel.id().asLongText());
+//        log.info("client: " + channel.remoteAddress() + " disconnected");
+//        log.info("channel id: " + channel.id().asLongText());
     }
 
     @Override
@@ -50,7 +51,8 @@ public class WsChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        log.info("channel id: " + channel.id().asLongText());
+        log.info("client: " + channel.remoteAddress() + " disconnected");
+        log.info("channel id: " + channel.id().asLongText() + " user id: " + channel.attr(AttributeKey.valueOf("userId")).get());
         NettyConfig.getChannelGroup().remove(channel);
         removeUserId(ctx);
     }
