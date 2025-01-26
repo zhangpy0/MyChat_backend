@@ -146,4 +146,24 @@ public class ChatController {
         return null;
     }
 
+    @Operation(summary = "获取文件大小")
+    @PostMapping("/fileInfo")
+    public Result getFileInfo(
+            @Parameter(description = "用户id", name = "userId", required = true) @RequestParam("userId") String userId,
+            @Parameter(description = "消息id", name = "messageId", required = true) @RequestParam("messageId") String messageId,
+            @Parameter(description = "token", in = ParameterIn.HEADER, required = true) @RequestHeader("token") String token
+    ) {
+        Result result = JWTUtils.checkToken(userId, token);
+        if (result != null) {
+            return result;
+        }
+        File file = chatMessageService.getFileByMessageId(Integer.valueOf(messageId));
+        if (file == null) {
+            return Result.fail(702, "File not found", null);
+        }
+        Map<String, String> fileInfo = Map.of("size", String.valueOf(file.length())
+                , "name", file.getName());
+        return Result.ok(fileInfo, "success");
+    }
+
 }
