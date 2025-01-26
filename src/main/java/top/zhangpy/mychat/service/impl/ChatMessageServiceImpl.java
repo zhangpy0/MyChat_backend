@@ -3,6 +3,7 @@ package top.zhangpy.mychat.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
@@ -100,21 +104,47 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     private Path saveFile(MultipartFile file, Path path) {
         File dest = path.toFile();
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs();
+        String targetDir = dest.getParent();
+        String fileName = dest.getName();
+        File targetFile = dest;
+        String targetPath = targetFile.getAbsolutePath();
+
+        while (targetFile.exists()) {
+            // 检查是否已有类似 "(1)" 的数字后缀
+            int dotIndex = fileName.lastIndexOf(".");
+            String baseName;
+            String extension = "";
+
+            if (dotIndex != -1) {
+                baseName = fileName.substring(0, dotIndex);
+                extension = fileName.substring(dotIndex);
+            } else {
+                baseName = fileName;
+            }
+
+            // 使用正则匹配 "(数字)" 后缀
+            String pattern = "^(.*)\\((\\d+)\\)$";
+            Pattern regex = java.util.regex.Pattern.compile(pattern);
+            Matcher matcher = regex.matcher(baseName);
+
+            int number = 1;
+            if (matcher.matches()) {
+                // 如果已包含数字后缀，提取基础名和数字
+                baseName = matcher.group(1).trim();
+                number = Integer.parseInt(matcher.group(2)) + 1;
+            }
+
+            // 添加或更新数字后缀
+            fileName = baseName + "(" + number + ")" + extension;
+            targetFile = new File(targetDir, fileName);
+            targetPath = targetFile.getAbsolutePath();
         }
-        int i = 1;
-        while (dest.exists()) {
-            String front = path.toString().split("\\.")[0];
-            String back = path.toString().split("\\.")[1];
-            dest = new File(front + "(" + i + ")." + back);
-            i++;
-        }
+        Path targetPathObj = Path.of(targetPath);
         try {
-            file.transferTo(dest);
+            file.transferTo(targetFile);
         } catch (IOException e) {
             log.error("Failed to save file", e);
         }
-        return dest.toPath();
+        return targetPathObj;
     }
 }
