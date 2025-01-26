@@ -53,7 +53,8 @@ public class PushServiceImpl implements PushService {
         if (!messageType.equals("text")) {
             filePath = chatMessage.getFilePath();
             fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
-            content = String.valueOf(chatMessage.getMessageId()) + ":" + fileName;
+            File file = new File(filePath);
+            content = chatMessage.getMessageId() + ":" + fileName + ":" + file.length();
         } else {
             content = chatMessage.getContent();
         }
